@@ -1,0 +1,9 @@
+[package]
+name = "rs_media_probe_worker"
+version = "0.1.0"
+authors = ["Valentin NOEL <valentin.noel@media-io.com>"]
+edition = "2018"
+
+[dependencies]
+mcai_worker_sdk = "0.10.0"
+stainless_ffmpeg = { git = "https://github.com/nomalab/stainless-ffmpeg.git", branch = "master" }
