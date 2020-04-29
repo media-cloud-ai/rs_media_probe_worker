@@ -25,8 +25,23 @@ pub fn process(
     })?;
 
   let mut probe = Probe::new(&source_path);
-  probe.process(LevelFilter::Off).unwrap();
-  let result = serde_json::to_string(&probe).unwrap();
+  probe.process(LevelFilter::Off).map_err(|error| {
+    MessageError::ProcessingError(
+      job_result
+        .clone()
+        .with_status(JobStatus::Error)
+        .with_message(&format!("Unable to process probe: {}", error)),
+    )
+  })?;
+
+  let result = serde_json::to_string(&probe).map_err(|error| {
+    MessageError::ProcessingError(
+      job_result
+        .clone()
+        .with_status(JobStatus::Error)
+        .with_message(&format!("Unable to serialize probe result: {:?}", error)),
+    )
+  })?;
 
   Ok(
     job_result
