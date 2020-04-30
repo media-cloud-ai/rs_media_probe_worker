@@ -5,7 +5,7 @@ authors = ["Valentin NOEL <valentin.noel@media-io.com>"]
 edition = "2018"
 
 [dependencies]
-mcai_worker_sdk = "0.10.0"
+mcai_worker_sdk = "0.10.1"
 stainless_ffmpeg = { git = "https://github.com/nomalab/stainless-ffmpeg.git", branch = "master" }
 log = "0.4"
 serde_json = "1.0.34"
