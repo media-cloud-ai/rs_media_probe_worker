@@ -1,9 +1,6 @@
-use mcai_worker_sdk::{
-  job::{Job, JobResult},
-  start_worker,
-  worker::{Parameter, ParameterType},
-  Channel, MessageError, MessageEvent, Version,
-};
+use mcai_worker_sdk::job::{Job, JobResult};
+use mcai_worker_sdk::worker::{Parameter, ParameterType};
+use mcai_worker_sdk::{start_worker, Channel, MessageError, MessageEvent, Version};
 
 mod message;
 
