@@ -1,12 +1,12 @@
 use log::LevelFilter;
 use mcai_worker_sdk::job::{Job, JobResult, JobStatus};
-use mcai_worker_sdk::{Channel, MessageError, ParametersContainer};
+use mcai_worker_sdk::{McaiChannel, MessageError, ParametersContainer};
 use stainless_ffmpeg::probe::Probe;
 
-pub const SOURCE_PATH_PARAMETER: &'static str = "source_path";
+pub const SOURCE_PATH_PARAMETER: &str = "source_path";
 
 pub fn process(
-  _channel: Option<&Channel>,
+  _channel: Option<McaiChannel>,
   job: &Job,
   job_result: JobResult,
 ) -> Result<JobResult, MessageError> {
@@ -62,67 +62,14 @@ pub fn test_probe_empty_path() {
 
 #[test]
 pub fn test_probe_remote_file() {
+  use serde_json::Value;
+
   let result = probe("https://github.com/avTranscoder/avTranscoder-data/raw/master/video/BigBuckBunny/BigBuckBunny_480p_stereo.avi");
   assert!(result.is_ok());
 
-  let expected = "{\
-  \"format\":{\
-    \"format_name\":\"avi\",\
-    \"format_long_name\":\"AVI (Audio Video Interleaved)\",\
-    \"program_count\":0,\
-    \"start_time\":0.0,\
-    \"duration\":30.0,\
-    \"bit_rate\":2325208,\
-    \"packet_size\":0,\
-    \"nb_streams\":2,\
-    \"metadata\":{\
-      \"encoder\":\"Lavf54.29.104\"\
-    },\
-    \"streams\":[\
-      {\
-        \"index\":0,\
-        \"stream_type\":\"video\",\
-        \"codec_name\":\"msmpeg4v2\",\
-        \"codec_long_name\":\"MPEG-4 part 2 Microsoft variant version 2\",\
-        \"codec_tag\":null,\
-        \"start_time\":0.0,\
-        \"duration\":30.0,\
-        \"bit_rate\":2064556,\
-        \"stream_metadata\":{},\
-        \"width\":854,\
-        \"height\":480,\
-        \"display_aspect_ratio\":{\
-          \"num\":0,\
-          \"den\":1\
-        },\
-        \"frame_rate\":{\
-          \"num\":24,\
-          \"den\":1\
-        },\
-        \"level\":null,\
-        \"profile\":null,\
-        \"scanning_type\":null,\
-        \"chroma_subsampling\":\"4:2:0\",\
-        \"timecode\":null,\
-        \"pix_fmt\":\"yuv420p\"\
-      },\
-      {\
-        \"index\":1,\
-        \"stream_type\":\"audio\",\
-        \"codec_name\":\"mp3\",\
-        \"codec_long_name\":\"MP3 (MPEG audio layer 3)\",\
-        \"codec_tag\":null,\
-        \"start_time\":0.0,\
-        \"duration\":30.0,\
-        \"bit_rate\":256000,\
-        \"stream_metadata\":{},\
-        \"channels\":2,\
-        \"sample_rate\":48000,\
-        \"sample_fmt\":\"fltp\",\
-        \"bits_per_sample\":0\
-      }\
-    ]\
-  }\
-}";
-  assert_eq!(expected, result.unwrap());
+  let result: Value = serde_json::from_str(&result.unwrap()).unwrap();
+
+  let expected = std::fs::read_to_string("./tests/result.json").unwrap();
+  let expected: Value = serde_json::from_str(&expected).unwrap();
+  assert_eq!(expected, result);
 }
