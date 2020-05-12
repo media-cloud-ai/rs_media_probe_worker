@@ -1,6 +1,6 @@
 use mcai_worker_sdk::job::{Job, JobResult};
 use mcai_worker_sdk::worker::{Parameter, ParameterType};
-use mcai_worker_sdk::{start_worker, Channel, MessageError, MessageEvent, Version};
+use mcai_worker_sdk::{start_worker, McaiChannel, MessageError, MessageEvent, Version};
 
 mod message;
 
@@ -43,13 +43,10 @@ It returns the result as JSON."#
 
   fn process(
     &self,
-    channel: Option<&Channel>,
+    channel: Option<McaiChannel>,
     job: &Job,
     job_result: JobResult,
   ) -> Result<JobResult, MessageError> {
-    //    let result = message::process(channel, job, job_result);
-    //    mcai_worker_sdk::debug!("result: {:?}", result);
-    //    result
     message::process(channel, job, job_result)
   }
 }
