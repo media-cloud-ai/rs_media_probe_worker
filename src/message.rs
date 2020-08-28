@@ -1,30 +1,15 @@
+use crate::MediaProbeParameters;
 use log::LevelFilter;
-use mcai_worker_sdk::job::{Job, JobResult, JobStatus};
-use mcai_worker_sdk::{McaiChannel, MessageError, ParametersContainer};
+use mcai_worker_sdk::job::{JobResult, JobStatus};
+use mcai_worker_sdk::{McaiChannel, MessageError};
 use stainless_ffmpeg::probe::Probe;
-
-pub const SOURCE_PATH_PARAMETER: &str = "source_path";
 
 pub fn process(
   _channel: Option<McaiChannel>,
-  job: &Job,
+  parameters: MediaProbeParameters,
   job_result: JobResult,
 ) -> Result<JobResult, MessageError> {
-  let source_path = job
-    .get_string_parameter(SOURCE_PATH_PARAMETER)
-    .ok_or_else(|| {
-      MessageError::ProcessingError(
-        job_result
-          .clone()
-          .with_status(JobStatus::Error)
-          .with_message(&format!(
-            "Invalid job message: missing expected '{}' parameter.",
-            SOURCE_PATH_PARAMETER
-          )),
-      )
-    })?;
-
-  let result = probe(&source_path).map_err(|error| {
+  let result = probe(&parameters.source_path).map_err(|error| {
     MessageError::ProcessingError(
       job_result
         .clone()

@@ -1,6 +1,8 @@
-use mcai_worker_sdk::job::{Job, JobResult};
-use mcai_worker_sdk::worker::{Parameter, ParameterType};
-use mcai_worker_sdk::{start_worker, McaiChannel, MessageError, MessageEvent, Version};
+#[macro_use]
+extern crate serde_derive;
+use mcai_worker_sdk::{
+  job::JobResult, start_worker, JsonSchema, McaiChannel, MessageError, MessageEvent, Version,
+};
 
 mod message;
 
@@ -10,10 +12,15 @@ macro_rules! crate_version {
   };
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct MediaProbeEvent {}
 
-impl MessageEvent for MediaProbeEvent {
+#[derive(Clone, Debug, Deserialize, JsonSchema)]
+pub struct MediaProbeParameters {
+  source_path: String,
+}
+
+impl MessageEvent<MediaProbeParameters> for MediaProbeEvent {
   fn get_name(&self) -> String {
     "Media probe".to_string()
   }
@@ -32,27 +39,17 @@ It returns the result as JSON."#
     Version::parse(crate_version!()).expect("unable to locate Package version")
   }
 
-  fn get_parameters(&self) -> Vec<Parameter> {
-    vec![Parameter {
-      identifier: message::SOURCE_PATH_PARAMETER.to_string(),
-      label: "Source path".to_string(),
-      kind: vec![ParameterType::String],
-      required: true,
-    }]
-  }
-
   fn process(
     &self,
     channel: Option<McaiChannel>,
-    job: &Job,
+    parameters: MediaProbeParameters,
     job_result: JobResult,
   ) -> Result<JobResult, MessageError> {
-    message::process(channel, job, job_result)
+    message::process(channel, parameters, job_result)
   }
 }
 
-static MEDIA_PROBE_EVENT: MediaProbeEvent = MediaProbeEvent {};
-
 fn main() {
-  start_worker(&MEDIA_PROBE_EVENT);
+  let message_event = MediaProbeEvent::default();
+  start_worker(message_event);
 }
