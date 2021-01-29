@@ -4,7 +4,6 @@ use mcai_worker_sdk::job::{JobResult, JobStatus};
 use mcai_worker_sdk::{McaiChannel, MessageError};
 use stainless_ffmpeg::probe::Probe;
 use std::fs;
-use std::path::Path;
 
 pub fn process(
   _channel: Option<McaiChannel>,
@@ -21,17 +20,15 @@ pub fn process(
   })?;
 
   if let Some(destination_path) = parameters.destination_path {
-    let output_path = Path::new(&destination_path);
-
-    fs::write(output_path, &result).map_err(|e| {
+    fs::write(&destination_path, &result).map_err(|e| {
       let error_result = job_result
         .clone()
         .with_status(JobStatus::Error)
         .with_message(&e.to_string());
       MessageError::ProcessingError(error_result)
     })?;
+    return Ok(job_result.with_status(JobStatus::Completed));
   }
-
   Ok(
     job_result
       .with_status(JobStatus::Completed)
