@@ -20,12 +20,8 @@ pub fn process(
   })?;
 
   if let Some(destination_path) = parameters.destination_path {
-    fs::write(&destination_path, &result).map_err(|e| {
-      let error_result = job_result
-        .clone()
-        .with_status(JobStatus::Error)
-        .with_message(&e.to_string());
-      MessageError::ProcessingError(error_result)
+    fs::write(&destination_path, &result).map_err(|io_error| {
+      MessageError::from(io_error, job_result.clone())
     })?;
     return Ok(job_result.with_status(JobStatus::Completed));
   }
