@@ -30,7 +30,7 @@
                 "height": 480,
                 "index": 0,
                 "level": null,
-                "nb_frame": 720,
+                "nb_frames": 720,
                 "pix_fmt": "yuv420p",
                 "profile": null,
                 "scanning_type": null,
