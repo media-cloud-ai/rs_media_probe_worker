@@ -20,9 +20,8 @@ pub fn process(
   })?;
 
   if let Some(destination_path) = parameters.destination_path {
-    fs::write(&destination_path, &result).map_err(|io_error| {
-      MessageError::from(io_error, job_result.clone())
-    })?;
+    fs::write(&destination_path, &result)
+      .map_err(|io_error| MessageError::from(io_error, job_result.clone()))?;
     return Ok(job_result.with_status(JobStatus::Completed));
   }
   Ok(
