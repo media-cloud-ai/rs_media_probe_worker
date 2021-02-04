@@ -3,6 +3,7 @@ use log::LevelFilter;
 use mcai_worker_sdk::job::{JobResult, JobStatus};
 use mcai_worker_sdk::{McaiChannel, MessageError};
 use stainless_ffmpeg::probe::Probe;
+use std::fs;
 
 pub fn process(
   _channel: Option<McaiChannel>,
@@ -18,6 +19,11 @@ pub fn process(
     )
   })?;
 
+  if let Some(destination_path) = parameters.destination_path {
+    fs::write(&destination_path, &result)
+      .map_err(|io_error| MessageError::from(io_error, job_result.clone()))?;
+    return Ok(job_result.with_status(JobStatus::Completed));
+  }
   Ok(
     job_result
       .with_status(JobStatus::Completed)

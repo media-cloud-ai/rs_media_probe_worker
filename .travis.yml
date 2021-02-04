@@ -1,12 +1,8 @@
 language: rust
 
 rust:
-  - 1.43.0
-  - 1.44.1
-  - 1.45.1
   - stable
   - beta
-  - nightly
 
 matrix:
   include:
@@ -32,7 +28,7 @@ matrix:
         - CHECK_SYNTAX=TRUE
 
     # Test coverage
-    - rust: nightly
+    - rust: stable
       install:
         - RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin --force
       script:

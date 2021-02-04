@@ -18,6 +18,7 @@ struct MediaProbeEvent {}
 #[derive(Clone, Debug, Deserialize, JsonSchema)]
 pub struct MediaProbeParameters {
   source_path: String,
+  destination_path: Option<String>,
 }
 
 impl MessageEvent<MediaProbeParameters> for MediaProbeEvent {
