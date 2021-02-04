@@ -1,6 +1,6 @@
 [package]
 name = "rs_media_probe_worker"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Valentin NOEL <valentin.noel@media-io.com>"]
 edition = "2018"
 
