@@ -28,7 +28,7 @@ matrix:
         - CHECK_SYNTAX=TRUE
 
     # Test coverage
-    - rust: nightly
+    - rust: stable
       install:
         - RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin --force
       script:
