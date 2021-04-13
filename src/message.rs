@@ -1,7 +1,7 @@
 use crate::MediaProbeParameters;
 use log::LevelFilter;
 use mcai_worker_sdk::job::{JobResult, JobStatus};
-use mcai_worker_sdk::{McaiChannel, MessageError};
+use mcai_worker_sdk::{info, McaiChannel, MessageError};
 use stainless_ffmpeg::probe::Probe;
 use std::fs;
 
@@ -22,6 +22,9 @@ pub fn process(
   if let Some(destination_path) = parameters.destination_path {
     fs::write(&destination_path, &result)
       .map_err(|io_error| MessageError::from(io_error, job_result.clone()))?;
+    if parameters.result_in_logs.unwrap_or_default() {
+      info!(target: &job_result.get_str_job_id(), "Probe result: {}", result);
+    }
     return Ok(job_result.with_status(JobStatus::Completed));
   }
   Ok(
