@@ -19,6 +19,9 @@ struct MediaProbeEvent {}
 pub struct MediaProbeParameters {
   source_path: String,
   destination_path: Option<String>,
+  /// Result in logs
+  /// If true, prints the json result in the log
+  result_in_logs: Option<bool>,
 }
 
 impl MessageEvent<MediaProbeParameters> for MediaProbeEvent {
